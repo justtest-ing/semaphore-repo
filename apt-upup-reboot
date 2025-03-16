@@ -1,0 +1,27 @@
+---
+- name: Update and Upgrade Packages with Reboot on Target Systems
+  hosts: all
+  tasks:
+    # Update package lists
+    - name: Update apt packages list
+      apt_update:
+        state: updated
+      register: update_output
+      display: yes
+
+    # Perform package upgrades
+    - name: Upgrade installed packages
+      apt_upgrade:
+        state: present
+        safe_upgrade: yes
+      ignore_errors: yes
+      register: upgrade_output
+      display: yes
+
+    # Reboot the system after updates and upgrades
+    - name: Reboot the server
+      reboot:
+        pre_reboot_delay: 60  # Optional delay before reboot (in seconds)
+        post_reboot_delay: 30  # Optional delay to wait after reboot (in seconds)
+        state: rebooted
+      ignore_errors: yes
